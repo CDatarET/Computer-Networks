@@ -1,3 +1,5 @@
+#rewritten assignment 2 from C to python for understanding
+
 def placeBit(transmit, pos):
     count = 0
     s = 0
