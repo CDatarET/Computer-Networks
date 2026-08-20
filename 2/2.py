@@ -82,3 +82,4 @@ else:
         print(" ", end = "")
     print("^")
     print("This is error bit")
+print("There is error at bit " + str(pos + 1))
