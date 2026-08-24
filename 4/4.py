@@ -1,15 +1,54 @@
-print("for n x m matrix, enter n and m: ", end = "")
-nm = input().split()
-nm[0] = int(nm[0])
-nm[1] = int(nm[1])
+n = 4
+inf = 999
 
-matrix = []
-for i in range(nm[0]):
-    t = []
-    for j in range(nm[1]):
-        n = int(input())
-        t.append(n)
-    matrix.append(t)
+cost = []
+dist = []
+nextHop = []
+for i in range(n):
+    a = []
+    b = []
+    c = []
+    for j in range(n):
+        a.append(0)
+        b.append(0)
+        c.append(0)
+    
+    cost.append(a)
+    dist.append(b)
+    nextHop.append(c)
 
-for i in range(len(matrix)):
-    print(matrix[i])
+print("Enter enter values of matrix-")
+for i in range(n):
+    for j in range(n):
+        t = int(input())
+        cost[i][j] = t
+
+for i in range(n):
+    for j in range(n):
+        dist[i][j] = cost[i][j]
+
+        if i == j:
+            nextHop[i][j] = i
+        elif cost[i][j] != inf:
+            nextHop[i][j] = j
+        else:
+            nextHop[i][j] = -1
+while True:
+    updated = 0
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                if dist[i][k] != inf and dist[k][j] != inf and dist[i][j] > dist[i][k] + dist[k][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    nextHop[i][j] = nextHop[i][k]
+                    updated = 1
+    if updated == 0:
+        break
+
+routers = ['A', 'B', 'C', 'D']
+for i in range(n):
+    print("\nRouting table for Router " + str(routers[i]))
+    print("Destination\tCost\tNext Hop")
+
+    for j in range(n):
+        print(str(routers[j]) + "\t\t" + str(dist[i][j]) + "\t" + str(routers[nextHop[i][j]]))
