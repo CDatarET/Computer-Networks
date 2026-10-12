@@ -1,3 +1,4 @@
+// Server side implementation of UDP client-server model 
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <unistd.h> 
@@ -14,31 +15,42 @@
 int main(){ 
     int sockfd; 
     char buffer[MAXLINE]; 
-    char *hello = "Hello from client"; 
-    struct sockaddr_in servaddr; 
+    char *hello = "Hello from server"; 
+    struct sockaddr_in servaddr, cliaddr; 
 
     // Creating socket file descriptor 
-    if( (sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ){ 
+    if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ){ 
         perror("socket creation failed"); 
         exit(EXIT_FAILURE); 
     } 
 
     memset(&servaddr, 0, sizeof(servaddr)); 
+    memset(&cliaddr, 0, sizeof(cliaddr)); 
 
     // Filling server information 
-    servaddr.sin_family = AF_INET; 
-    servaddr.sin_port = htons(PORT); 
+    servaddr.sin_family = AF_INET; // IPv4 
     servaddr.sin_addr.s_addr = INADDR_ANY; 
+    servaddr.sin_port = htons(PORT); 
 
-    int n, len; 
+    // Bind the socket with the server address 
+    if(bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0 ) { 
+        perror("bind failed"); 
+        exit(EXIT_FAILURE); 
+    } 
 
-    sendto(sockfd, (const char *)hello, strlen(hello), 0, (const struct sockaddr *) &servaddr, sizeof(servaddr)); 
-    printf("Hello message sent.\n"); 
+    int len, n; 
 
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE, 0, (struct sockaddr *) &servaddr, &len); 
-    buffer[n] = '\0'; 
-    printf("Server : %s\n", buffer); 
+    len = sizeof(cliaddr); //len is value/resuslt 
 
-    close(sockfd); 
+    while(strcmp(hello, "exit") != 0){
+        fgets()
+        n = recvfrom(sockfd, (char *)buffer, MAXLINE, 0, ( struct sockaddr *) &cliaddr, &len);
+        buffer[n] = '\0'; 
+        printf("Client : %s\n", buffer); 
+        sendto(sockfd, (const char *)hello, strlen(hello), 0, (const struct sockaddr *) &cliaddr, len); 
+        printf("message sent.\n");
+    }
+    
+
     return 0; 
 } 
