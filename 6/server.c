@@ -18,7 +18,6 @@ int main(void) {
     struct sockaddr_in servaddr, cliaddr;
     socklen_t len;
 
-    // Create UDP socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     if (sockfd < 0) {
@@ -29,12 +28,10 @@ int main(void) {
     memset(&servaddr, 0, sizeof(servaddr));
     memset(&cliaddr, 0, sizeof(cliaddr));
 
-    // Configure server address
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(PORT);
 
-    // Bind socket to port
     if (bind(sockfd, (struct sockaddr *)&servaddr,
              sizeof(servaddr)) < 0) {
         perror("Bind failed");
@@ -44,10 +41,9 @@ int main(void) {
 
     printf("UDP server listening on port %d...\n", PORT);
 
-    while (1) {
+    while (true) {
         len = sizeof(cliaddr);
 
-        // Receive message from client
         int n = recvfrom(sockfd, buffer, MAXLINE - 1, 0,
                          (struct sockaddr *)&cliaddr, &len);
 
@@ -59,13 +55,11 @@ int main(void) {
         buffer[n] = '\0';
         printf("\nClient: %s\n", buffer);
 
-        // Exit if client sends "exit"
         if (strcmp(buffer, "exit") == 0) {
             printf("Client disconnected.\n");
             break;
         }
 
-        // Read server reply
         printf("Server reply: ");
         if (fgets(reply, sizeof(reply), stdin) == NULL) {
             break;
@@ -73,7 +67,6 @@ int main(void) {
 
         reply[strcspn(reply, "\n")] = '\0';
 
-        // Send reply to client
         if (sendto(sockfd, reply, strlen(reply), 0,
                    (struct sockaddr *)&cliaddr, len) < 0) {
             perror("sendto failed");

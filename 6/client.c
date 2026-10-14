@@ -17,7 +17,6 @@ int main(void) {
     struct sockaddr_in servaddr;
     socklen_t len = sizeof(servaddr);
 
-    // Create UDP socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     if (sockfd < 0) {
@@ -27,11 +26,9 @@ int main(void) {
 
     memset(&servaddr, 0, sizeof(servaddr));
 
-    // Configure server address
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(PORT);
 
-    // Connect to the server on the same machine
     if (inet_pton(AF_INET, "127.0.0.1",
                   &servaddr.sin_addr) != 1) {
         fprintf(stderr, "Invalid server IP address\n");
@@ -39,8 +36,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    while (1) {
-        // Read message from client
+    while (true) {
         printf("\nClient message: ");
 
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
@@ -49,7 +45,6 @@ int main(void) {
 
         buffer[strcspn(buffer, "\n")] = '\0';
 
-        // Send message to server
         if (sendto(sockfd, buffer, strlen(buffer), 0,
                    (struct sockaddr *)&servaddr,
                    sizeof(servaddr)) < 0) {
@@ -57,13 +52,11 @@ int main(void) {
             break;
         }
 
-        // Exit if client sends "exit"
         if (strcmp(buffer, "exit") == 0) {
             printf("Client exiting.\n");
             break;
         }
 
-        // Receive server reply
         int n = recvfrom(sockfd, buffer, MAXLINE - 1, 0,
                          (struct sockaddr *)&servaddr, &len);
 
@@ -75,7 +68,6 @@ int main(void) {
         buffer[n] = '\0';
         printf("Server: %s\n", buffer);
 
-        // Exit if server replies "exit"
         if (strcmp(buffer, "exit") == 0) {
             printf("Server ended the conversation.\n");
             break;
